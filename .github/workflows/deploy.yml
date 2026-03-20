@@ -1,0 +1,23 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches:
+      - render-deployment
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Trigger Render Deploy Hook
+        # Assuming you will configure a Render Webhook and store it in GitHub Secrets
+        if: env.RENDER_DEPLOY_HOOK_URL != ''
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
+      - name: Info
+        run: echo "To use this workflow, set up a Deploy Hook URL in Render for your Static Site and add it as a GitHub Secret named RENDER_DEPLOY_HOOK_URL."
